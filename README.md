@@ -1,5 +1,7 @@
 # AirTracer 🌐
 
+[English](README_EN.md) | [日本語](README_JA.md) | [한국어](README_KO.md) | **中文**
+
 [![FindMy Compatibility](https://img.shields.io/badge/FindMy-Macless_Support-blueviolet.svg?style=flat-square)](#)
 [![MQTT Discovery](https://img.shields.io/badge/HomeAssistant-MQTT_Discovery-green.svg?style=flat-square)](#)
 [![Platform](https://img.shields.io/badge/Platform-Web_%7C_Android-orange.svg?style=flat-square)](#)
