@@ -61,8 +61,8 @@
 Pre-built hardware firmwares and mobile clients are available on our [Releases](../../releases) page:
 
 ### 1. Android Client (APK)
-- **AirTracer Android App**: Optimized mobile client featuring desktop widgets, background background-position reporting, real-time map viewing, and alarm notifications.
-- 👉 [Download Latest APK](../../releases/latest)
+- **AirTracer Android App**: Optimized mobile client featuring desktop widgets, background positioning report, real-time map viewing, and alarm notifications.
+- 👉 [Download Latest APK](../../releases/latest) (GitHub Releases)
 
 ### 2. Device Firmware (Firmware)
 - **InfiTag (無極)**: **[Recommended]** Based on the dynamic rolling key mechanism. Delivers more real-time positions, continuous tracking, and detailed paths without location report loss. Supports nRF51822 beacons.

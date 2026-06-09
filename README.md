@@ -62,7 +62,7 @@
 
 ### 1. Android 客户端 (APK)
 - **AirTracer Android App**：专为移动端优化的客户端，支持桌面小组件、后台持续定位上报、实时地图查看和设备报警推送。
-- 👉 [下载最新版 APK](../../releases/latest)
+- 👉 [下载最新版 APK](../../releases/latest) (GitHub Releases)
 
 ### 2. 硬件端固件 (Firmware)
 - **InfiTag (无极)**：**【推荐】** 基于动态滚动密钥机制，定位更实时、轨迹点更多更连贯、轨迹线更详细，规避了苹果丢弃位置的问题，定位更精准。支持基于 nRF51822 芯片的硬件。

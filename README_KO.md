@@ -62,7 +62,7 @@
 
 ### 1. Android 클라이언트 (APK)
 - **AirTracer Android 앱**: 바탕화면 위젯, 백그라운드 위치 보고, 실시간 지도 뷰어, 경보 알림을 완벽하게 지원하는 모바일 특화 앱.
-- 👉 [최신 APK 다운로드](../../releases/latest)
+- 👉 [최신 APK 다운로드](../../releases/latest) (GitHub Releases)
 
 ### 2. 하드웨어 펌웨어 (Firmware)
 - **InfiTag (무극)**: **【추천】** 동적 롤링 키 메커니즘을 기반으로 작동하여 실시간 위치 정확도를 극대화하고 위치 데이터 유실을 방지합니다. nRF51822 칩을 지원합니다.
