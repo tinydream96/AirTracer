@@ -22,17 +22,22 @@ jobs:
       - name: Upload to Gitee Release
         env:
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          # 请确保下面两行是你的真实 Gitee 用户名和仓库名
           GITEE_OWNER: "yufrv" 
           GITEE_REPO: "AirTracer"
         run: |
           TAG_NAME="${{ github.event.release.tag_name }}"
           RELEASE_NAME="${{ github.event.release.name }}"
           BODY="${{ github.event.release.body }}"
-          # 获取 GitHub 发布时所针对的分支 (例如 main 或 master)
+          
+          # 获取 GitHub 发布时的目标分支
           TARGET="${{ github.event.release.target_commitish }}"
+          
+          # 保底机制：如果为空，则强制设为 master (如果你的主分支叫 main，请把下面的 master 改成 main)
+          if [ -z "$TARGET" ] || [ "$TARGET" == "null" ]; then
+            TARGET="main" 
+          fi
 
-          # 构造 JSON 负载，新增了 target_commitish 字段
+          # 构造 JSON 负载
           JSON_PAYLOAD=$(jq -n \
             --arg token "$GITEE_TOKEN" \
             --arg tag "$TAG_NAME" \
@@ -40,6 +45,8 @@ jobs:
             --arg body "$BODY" \
             --arg target "$TARGET" \
             '{access_token: $token, tag_name: $tag, target_commitish: $target, name: $name, body: $body}')
+
+          echo "DEBUG: 即将发送到 Gitee 的分支参数为: $TARGET"
 
           CREATE_RESP=$(curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases" \
             -H "Content-Type: application/json" \
