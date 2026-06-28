@@ -1,0 +1,65 @@
+name: Sync Release to Gitee
+
+# 触发条件：当 GitHub 上的 Release 状态变为 published 时执行
+on:
+  release:
+    types: [published]
+
+jobs:
+  sync-to-gitee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download APK from GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 自动下载当前 GitHub Release 中的所有 .apk 文件到本地 apk_dist 文件夹
+          gh release download ${{ github.event.release.tag_name }} --pattern "*.apk" --dir ./apk_dist
+
+      - name: Upload to Gitee Release
+        env:
+          # 读取你在 GitHub Secrets 里设置的 Gitee Token
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          # ⬇️ 必填项：请将下面两行修改为你的 Gitee 真实信息 ⬇️
+          GITEE_OWNER: "yufrv" 
+          GITEE_REPO: "AirTracer"
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          RELEASE_NAME="${{ github.event.release.name }}"
+          BODY="${{ github.event.release.body }}"
+
+          # 1. 构造 JSON 负载并调用 Gitee API 创建 Release
+          # 使用 jq 工具构造 JSON 可以完美避免版本说明中包含特殊字符导致的解析错误
+          JSON_PAYLOAD=$(jq -n \
+            --arg token "$GITEE_TOKEN" \
+            --arg tag "$TAG_NAME" \
+            --arg name "$RELEASE_NAME" \
+            --arg body "$BODY" \
+            '{access_token: $token, tag_name: $tag, name: $name, body: $body}')
+
+          CREATE_RESP=$(curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases" \
+            -H "Content-Type: application/json" \
+            -d "$JSON_PAYLOAD")
+
+          # 提取 Gitee 返回的 Release ID
+          RELEASE_ID=$(echo $CREATE_RESP | jq -r '.id')
+
+          if [ "$RELEASE_ID" == "null" ] || [ -z "$RELEASE_ID" ]; then
+            echo "创建 Gitee Release 失败。API 返回: $CREATE_RESP"
+            exit 1
+          fi
+          echo "Gitee Release 创建成功，ID: $RELEASE_ID"
+
+          # 2. 遍历刚才下载的 APK，并上传到新创建的 Gitee Release 中
+          for apk_file in ./apk_dist/*.apk; do
+            if [ -f "$apk_file" ]; then
+              echo "正在上传 $apk_file 到 Gitee..."
+              curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases/$RELEASE_ID/attach_files" \
+                -F "access_token=$GITEE_TOKEN" \
+                -F "file=@$apk_file"
+              echo -e "\n上传完成！"
+            fi
+          done
