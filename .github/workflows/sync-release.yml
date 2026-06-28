@@ -21,30 +21,30 @@ jobs:
 
       - name: Upload to Gitee Release
         env:
-          # 读取你在 GitHub Secrets 里设置的 Gitee Token
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          # ⬇️ 必填项：请将下面两行修改为你的 Gitee 真实信息 ⬇️
+          # 请确保下面两行是你的真实 Gitee 用户名和仓库名
           GITEE_OWNER: "yufrv" 
           GITEE_REPO: "AirTracer"
         run: |
           TAG_NAME="${{ github.event.release.tag_name }}"
           RELEASE_NAME="${{ github.event.release.name }}"
           BODY="${{ github.event.release.body }}"
+          # 获取 GitHub 发布时所针对的分支 (例如 main 或 master)
+          TARGET="${{ github.event.release.target_commitish }}"
 
-          # 1. 构造 JSON 负载并调用 Gitee API 创建 Release
-          # 使用 jq 工具构造 JSON 可以完美避免版本说明中包含特殊字符导致的解析错误
+          # 构造 JSON 负载，新增了 target_commitish 字段
           JSON_PAYLOAD=$(jq -n \
             --arg token "$GITEE_TOKEN" \
             --arg tag "$TAG_NAME" \
             --arg name "$RELEASE_NAME" \
             --arg body "$BODY" \
-            '{access_token: $token, tag_name: $tag, name: $name, body: $body}')
+            --arg target "$TARGET" \
+            '{access_token: $token, tag_name: $tag, target_commitish: $target, name: $name, body: $body}')
 
           CREATE_RESP=$(curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases" \
             -H "Content-Type: application/json" \
             -d "$JSON_PAYLOAD")
 
-          # 提取 Gitee 返回的 Release ID
           RELEASE_ID=$(echo $CREATE_RESP | jq -r '.id')
 
           if [ "$RELEASE_ID" == "null" ] || [ -z "$RELEASE_ID" ]; then
@@ -53,7 +53,6 @@ jobs:
           fi
           echo "Gitee Release 创建成功，ID: $RELEASE_ID"
 
-          # 2. 遍历刚才下载的 APK，并上传到新创建的 Gitee Release 中
           for apk_file in ./apk_dist/*.apk; do
             if [ -f "$apk_file" ]; then
               echo "正在上传 $apk_file 到 Gitee..."
