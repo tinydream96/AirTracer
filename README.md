@@ -95,6 +95,8 @@
 
 - 👶 **[小白新手保姆级教程](docs/beginner_tutorial.md)**：图文并茂，手把手教你如何从零开始注册账号、登录并成功添加第一个设备。
 - 📖 **[用户使用指南](docs/user_guide.md)**：教你如何注册、登录、添加你的第一个硬件或手机追踪设备、配置电子围栏与 Telegram 通知。
+- 🗺️ **[高德地图 API Key 申请教程](docs/amap_api_key_tutorial.md)**：手把手教你免费申请高德地图密钥，以便在项目中稳定使用地图和定位服务。
+- 🌍 **[天地图 API Key 申请教程](docs/tianditu_api_key_tutorial.md)**：专为小白编写，教你免费申请天地图密钥，解决 Android 端地图加载限制问题。
 - 🔌 **[固件烧录与硬件接入指引](docs/firmware_guide.md)**：针对 nRF51/nRF52 芯片的接线、烧录工具（OpenOCD/J-Flash）以及公钥 Seed 生成指南。
 - 🏠 **[Home Assistant 集成指南](docs/home_assistant.md)**：详细阐述如何配置 MQTT、使用你的专属凭证将定位数据无缝推送到智能家居中心。
 
