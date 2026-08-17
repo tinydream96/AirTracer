@@ -94,6 +94,7 @@
 为了帮助您快速上手，我们准备了详细的分类指南：
 
 - 👶 **[小白新手保姆级教程](docs/beginner_tutorial.md)**：图文并茂，手把手教你如何从零开始注册账号、登录并成功添加第一个设备。
+- 🛰️ **[Infi Tag 专属新手使用指南](docs/infitag_user_guide.md)**：专为 Infi Tag 用户编写，涵盖注册绑定、设备切换、历史轨迹与精确时间范围查询、常见无轨迹自查清单等。
 - 📖 **[用户使用指南](docs/user_guide.md)**：教你如何注册、登录、添加你的第一个硬件或手机追踪设备、配置电子围栏与 Telegram 通知。
 - 🗺️ **[高德地图 API Key 申请教程](docs/amap_api_key_tutorial.md)**：手把手教你免费申请高德地图密钥，以便在项目中稳定使用地图和定位服务。
 - 🌍 **[天地图 API Key 申请教程](docs/tianditu_api_key_tutorial.md)**：专为小白编写，教你免费申请天地图密钥，解决 Android 端地图加载限制问题。
