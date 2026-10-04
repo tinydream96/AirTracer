@@ -12,6 +12,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Optimize Network (Enable BBR & TCP Buffers)
+        run: |
+          # 开启 BBR 拥塞控制算法并增大 TCP 缓冲区，极大提升跨国长延迟线路的单连接上传速率
+          sudo modprobe tcp_bbr 2>/dev/null || true
+          sudo sysctl -w net.core.default_qdisc=fq
+          sudo sysctl -w net.ipv4.tcp_congestion_control=bbr
+          sudo sysctl -w net.ipv4.tcp_rmem="4096 87380 16777216"
+          sudo sysctl -w net.ipv4.tcp_wmem="4096 65536 16777216"
+          echo "网络协议栈优化完成: $(sysctl net.ipv4.tcp_congestion_control)"
+
       - name: Download APK from GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -32,40 +42,72 @@ jobs:
           # 获取 GitHub 发布时的目标分支
           TARGET="${{ github.event.release.target_commitish }}"
           
-          # 保底机制：如果为空，则强制设为 master (如果你的主分支叫 main，请把下面的 master 改成 main)
+          # 保底机制：如果为空，则强制设为 main
           if [ -z "$TARGET" ] || [ "$TARGET" == "null" ]; then
             TARGET="main" 
           fi
 
-          # 构造 JSON 负载
-          JSON_PAYLOAD=$(jq -n \
-            --arg token "$GITEE_TOKEN" \
-            --arg tag "$TAG_NAME" \
-            --arg name "$RELEASE_NAME" \
-            --arg body "$BODY" \
-            --arg target "$TARGET" \
-            '{access_token: $token, tag_name: $tag, target_commitish: $target, name: $name, body: $body}')
+          # 1. 优先检查 Gitee 是否已存在同名 Tag 的 Release（防止重试时报 Release 已存在）
+          echo "正在检查 Gitee 上是否已存在 Tag: $TAG_NAME 的 Release..."
+          EXIST_RESP=$(curl -s --connect-timeout 15 "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases/tags/$TAG_NAME?access_token=$GITEE_TOKEN")
+          RELEASE_ID=$(echo "$EXIST_RESP" | jq -r '.id // empty')
 
-          echo "DEBUG: 即将发送到 Gitee 的分支参数为: $TARGET"
+          if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+            echo "检测到 Gitee Release 已存在，复用现有 ID: $RELEASE_ID"
+          else
+            echo "Gitee Release 不存在，开始创建..."
+            JSON_PAYLOAD=$(jq -n \
+              --arg token "$GITEE_TOKEN" \
+              --arg tag "$TAG_NAME" \
+              --arg name "$RELEASE_NAME" \
+              --arg body "$BODY" \
+              --arg target "$TARGET" \
+              '{access_token: $token, tag_name: $tag, target_commitish: $target, name: $name, body: $body}')
 
-          CREATE_RESP=$(curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases" \
-            -H "Content-Type: application/json" \
-            -d "$JSON_PAYLOAD")
+            CREATE_RESP=$(curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases" \
+              -H "Content-Type: application/json" \
+              -d "$JSON_PAYLOAD")
 
-          RELEASE_ID=$(echo $CREATE_RESP | jq -r '.id')
+            RELEASE_ID=$(echo "$CREATE_RESP" | jq -r '.id // empty')
 
-          if [ "$RELEASE_ID" == "null" ] || [ -z "$RELEASE_ID" ]; then
-            echo "创建 Gitee Release 失败。API 返回: $CREATE_RESP"
-            exit 1
+            if [ -z "$RELEASE_ID" ] || [ "$RELEASE_ID" == "null" ]; then
+              echo "创建 Gitee Release 失败。API 返回: $CREATE_RESP"
+              exit 1
+            fi
+            echo "Gitee Release 创建成功，ID: $RELEASE_ID"
           fi
-          echo "Gitee Release 创建成功，ID: $RELEASE_ID"
 
+          # 2. 查询已上传附件列表，避免重复上传已有的包
+          ATTACH_LIST=$(curl -s "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases/$RELEASE_ID/attach_files?access_token=$GITEE_TOKEN")
+
+          # 3. 循环上传 APK 文件
           for apk_file in ./apk_dist/*.apk; do
             if [ -f "$apk_file" ]; then
-              echo "正在上传 $apk_file 到 Gitee..."
-              curl -s -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases/$RELEASE_ID/attach_files" \
+              FILE_NAME=$(basename "$apk_file")
+              FILE_SIZE=$(du -h "$apk_file" | cut -f1)
+
+              if echo "$ATTACH_LIST" | grep -q "\"name\":\"$FILE_NAME\""; then
+                echo "附件 [$FILE_NAME] 在 Gitee 上已存在，跳过上传。"
+                continue
+              fi
+
+              echo "=================================================="
+              echo "正在上传 $FILE_NAME ($FILE_SIZE) 到 Gitee..."
+              echo "=================================================="
+
+              # 使用 BBR + 1MB 发送缓存 + 进度条 + 自动重试 3 次 + 超时控制
+              curl -S \
+                --progress-bar \
+                --connect-timeout 30 \
+                --max-time 600 \
+                --retry 3 \
+                --retry-delay 5 \
+                --retry-connrefused \
+                --buffer-size 1048576 \
+                -X POST "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases/$RELEASE_ID/attach_files" \
                 -F "access_token=$GITEE_TOKEN" \
                 -F "file=@$apk_file"
-              echo -e "\n上传完成！"
+
+              echo -e "\n[$FILE_NAME] 上传完成！"
             fi
           done
