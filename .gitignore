@@ -1,3 +1,18 @@
-# AirTracer local APK ignore
+# macOS 系统缓存垃圾文件
+.DS_Store
+**/.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# 本地大型安装包与编译产物
 AirTracer.apk
 *.apk
+
+# 本地办公编辑临时文件（仅保留导出的 PDF）
+*.docx
+~$*.docx
+
+# Python 缓存
+__pycache__/
+*.py[cod]

@@ -11,10 +11,10 @@
 - 👉 [添加设备图文教程（自主添加）](./tutorial_add_device.md)
 - 👉 [Infi Tag 专属新手使用指南（管理员代绑定/日常查轨迹）](./infitag_user_guide.md)
 
-## 3. 其他进阶指南
-如果你已经完成了上述基础步骤，可以查看以下文档了解更多高级功能：
-- [Infi Tag 新手使用指南](./infitag_user_guide.md)
-- [高德地图 API Key 申请教程](./amap_api_key_tutorial.md)
-- [固件使用指南](./firmware_guide.md)
-- [Home Assistant 接入指南](./home_assistant.md)
-- [用户使用指南](./user_guide.md)
+## 3. 其他进阶指南与地图配置
+如果你已经完成了上述基础步骤，可以查看以下文档了解更多高级功能与配置：
+- 🛰️ [Infi Tag 专属新手使用指南](./infitag_user_guide.md)
+- 🗺️ [高德地图 API Key 申请教程](./amap_api_key_tutorial.md)
+- 🌍 [天地图 API Key 申请教程](./tianditu_api_key_tutorial.md)
+- 🏠 [Home Assistant 智能家居接入指南](./home_assistant.md)
+- 📖 [用户使用指南与进阶功能](./user_guide.md)

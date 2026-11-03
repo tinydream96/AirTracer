@@ -4,97 +4,117 @@
 
 [![FindMy Compatibility](https://img.shields.io/badge/FindMy-Macless_Support-blueviolet.svg?style=flat-square)](#)
 [![MQTT Discovery](https://img.shields.io/badge/HomeAssistant-MQTT_Discovery-green.svg?style=flat-square)](#)
-[![Platform](https://img.shields.io/badge/Platform-Web_%7C_Android-orange.svg?style=flat-square)](#)
+[![Platform](https://img.shields.io/badge/Platform-Web_%7C_Android_%7C_iOS_PWA-orange.svg?style=flat-square)](#)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
-**AirTracer** is a modern smart tracking and device management system based on the Apple FindMy network (Macless architecture) and various GPS data sources. This repository is the public hub for AirTracer, hosting core client software (including the Android application and device firmwares), detailed usage guides, and introducing the enterprise-grade private project **Tracer** for those with customization or self-hosting needs.
+> 📍 **Truly Continuous Apple FindMy Smart Tracking & Anti-Loss System**  
+> Say goodbye to location loss and broken lines. Macless architecture, cross-platform support for Android, iOS, and Web. Designed specifically for **vehicle tracking, pet recovery, elder/child safety, and high-value asset monitoring**.
 
 🌐 **Official Live Platform**: [https://airtracer.us](https://airtracer.us)
 
 ---
 
-## 🎨 Interface Preview
+## ⚡ Why Choose Our InfiTag Anti-Loss Tracker?
 
-### 💻 Desktop Web (PC)
-| **PC InfiTag Control Center** | **PC LoopTag Trajectory Details** |
-|:---:|:---:|
-| ![PC InfiTag](images/web/Infitag.png) | ![PC LoopTag Trajectory](images/web/Looptag轨迹线.png) |
-| *Large screen multi-dimensional map tracking & dashboard* | *High-precision detailed trajectory line & point analysis* |
+Many users face major frustrations when using standard AirTags or traditional open-source FindMy beacons:
+* ❌ **Infrequent Location Updates**: Devices can move for hours without reporting an updated location.
+* ❌ **Broken Trajectories**: The path is reduced to a single coarse straight line bridging distant timestamps.
+* ❌ **Suppressed by System Filters**: Traditional static beacons have obvious transmission patterns, triggering system anti-stalking policies that **drop or suppress over 80% of reports**.
+
+**InfiTag is powered by our proprietary Tracer Tracking Engine**, solving these issues from the ground up:
+
+| Dimension | 🔵 Standard Beacons / Open-Source (LoopTag) | 👑 AirTracer InfiTag (Recommended Device) |
+| :--- | :--- | :--- |
+| **Protocol Design** | **Static Fixed Protocol**: Identifiers remain static and easily detected. | **Tracer Engine**: Intelligently adapts to official network policies with seamless transmission. |
+| **System Filtering** | ⚠️ **Heavy Location Loss**<br>System filters trigger on static broadcast patterns, **dropping over 80% of location reports**. | ✅ **Fully Immune**<br>Tracer proprietary adaptive communication allows reports to be processed naturally with **zero filtering penalty**. |
+| **Trajectory Quality** | ❌ **Coarse Straight Lines / Large Gaps**<br>Missing points force straight-line approximations across huge gaps. | 🎯 **Smooth, Lane-Level Road Curves**<br>Captures high-density coordinates to create continuous, uninterrupted travel paths. |
+| **Update Latency** | ⏳ **Very Low** (Once every few hours or worse). | ⚡ **High-Frequency** (Real-time updates whenever nearby devices pass by). |
+| **Best Used For** | Indoor keys or static item location. | **Vehicles, pets, seniors, children, outdoor continuous tracking.** |
+
+### 📊 Real Trajectory Comparison
+
+| 👑 InfiTag Path (Tracer Engine · Follows Road) | 🔵 Traditional Path (Static Mode · Dropped Points) |
+| :---: | :---: |
+| ![InfiTag Trajectory](images/web/Infitag.png) | ![Traditional Trajectory](images/web/Looptag轨迹线.png) |
+| *Dense, continuous coordinates restoring authentic road travel* | *Intermediate points dropped by system; forced straight-line connection* |
 
 ---
 
-### 📱 Mobile Web & App
-| **InfiTag Mobile App** | **LoopTag Mobile App** |
-|:---:|:---:|
-| ![InfiTag Mobile](images/mobile/Infitag-phone.png) | ![LoopTag Mobile](images/mobile/looptag-phone.png) |
-| *Dynamic rolling keys: Real-time, continuous, and more precise* | *Fixed Key mode: Easily filtered by Apple, causing track loss* |
+## 📱 User Experience & Features
 
-| **Mobile Dashboard** | **Mobile Device Management** |
-|:---:|:---:|
-| ![Mobile Dashboard](images/mobile/控制中心.png) | ![Mobile Device Management](images/mobile/设备管理.png) |
-| *Mobile multi-device real-time positioning* | *Unified device status monitoring & quick config* |
+### 1. Cross-Platform Experience (Mobile & Web)
+Seamless, adaptive interface across Android, iOS, and desktop browsers:
 
-| **Trajectory Playback** | **Geofence Settings** |
-|:---:|:---:|
+| Mobile Live Map & Cards | Device Management & Status |
+| :---: | :---: |
+| ![Mobile Dashboard](images/mobile/控制中心.png) | ![Device Management](images/mobile/设备管理.png) |
+
+| Speed-Colored Track Playback | Geofence Alerts |
+| :---: | :---: |
 | ![Trajectory Playback](images/mobile/轨迹线.png) | ![Geofence Settings](images/mobile/电子围栏.png) |
-| *High-precision path rendering & dwell points analysis* | *Custom geofences & smart alarm triggers* |
 
-| **Home Assistant Integration** | **Notification Settings** |
-|:---:|:---:|
-| ![HA Integration](images/mobile/打通hass.png) | ![Notification Settings](images/mobile/通知.png) |
-| *Zero-code HA entity auto-discovery via MQTT* | *Custom alarm notifications & system preferences* |
-
----
-
-## 🚀 Core Features
-
-- 📡 **Macless FindMy Tracking**: Retrieve device location reports directly from Apple servers via the `anisette-v3` stack and smart scheduler—no Mac hardware gateway required.
-- 🔄 **Smart Key Derivation Algorithm**: Unlike traditional LoopTag devices using fixed keys (which are prone to being discarded as spam by Apple servers), AirTracer utilizes a **Dynamic Rolling Key Algorithm** for InfiTag. Combined with a **Smart Waterfall Strategy**, it fetches more real-time locations, dense track points, and detailed path lines with significantly higher precision.
-- 🏡 **Native Home Assistant Integration**: Built-in MQTT Discovery protocol. Device locations, status, and battery levels map automatically as `device_tracker` and `sensor` entities. Supports **strict multi-user security isolation**.
-- 🗺️ **High-Precision Track & Geofencing**: Powered by Leaflet & Amap (AutoNavi) engines. Features path playback, heatmap rendering, dwell point extraction, and geofence alarms.
-- 🔔 **Multi-Channel Alerts**: Trigger immediate push alerts via Telegram Bot or web notifications upon entering/leaving geofences or low battery events.
+### 2. Key Highlights
+- 📡 **Macless FindMy Architecture**: Direct integration with Apple FindMy network via smart proxy scheduling—no Mac mini or gateway required.
+- 🔄 **Tracer High-Density Engine**: High-density trajectory points, ultra-low latency, and intelligent path smoothing.
+- 🔔 **Instant Geofencing & Push Notifications**: Set boundary limits with immediate alerts via Telegram bot or push notifications.
+- 🔋 **Extended Battery Life & Health Monitoring**: Ultra-low power consumption with low-battery warnings.
+- 🏡 **Smart Home Native (Home Assistant)**: Full MQTT Discovery support to automatically create sensors and device trackers.
 
 ---
 
-## 📦 Software Releases & Downloads
+## 🚀 3-Minute Quick Start for Device Owners
 
-Pre-built hardware firmwares and mobile clients are available on our [Releases](../../releases) page:
+If you have purchased an InfiTag tracker, get started in 3 simple steps:
 
-### 1. Android Client (APK)
-- **AirTracer Android App**: Optimized mobile client featuring desktop widgets, background positioning report, real-time map viewing, and alarm notifications.
-- 👉 [Download Latest APK](../../releases/latest) (GitHub Releases)
+### Step 1: Access Platform or Download App
+* 🌐 **Web Access**: Open [https://airtracer.us](https://airtracer.us) on any browser.
+* 🤖 **Android Users**: [👉 Download Latest Android APK](../../releases/latest)
+* 🍎 **iOS / iPhone Users (10-Second PWA Installation)**:
+  1. Open [https://airtracer.us](https://airtracer.us) in Safari;
+  2. Tap the **Share** button (box with an upward arrow 📤);
+  3. Tap **Add to Home Screen** to install as a full-screen app.
 
-### 2. Device Firmware (Firmware)
-- **InfiTag (無極)**: **[Recommended]** Based on the dynamic rolling key mechanism. Delivers more real-time positions, continuous tracking, and detailed paths without location report loss. Supports nRF51822 beacons.
-- **LoopTag**: Based on the traditional fixed public key mechanism. Suitable for simple tests or low-frequency tracking (Note: Fixed key locations may be filtered/discarded by Apple). Supports nRF52810/nRF52832 beacons.
-- 👉 [Download Firmware Package](../../releases/latest)
+### Step 2: Register & Bind Your Device
+1. Click **Register** on the platform, choose your username and password, then sign in;
+2. Provide your registered username to customer support as instructed in your packaging;
+3. Refresh the page to see your tracker active on the map!
+
+### Step 3: Track & Review
+* **Real-time Map**: Tap the device card to instantly center on its location.
+* **History Playback**: Tap the **Calendar** icon, pick your date range, and click **Confirm** to view path history.
+* **Geofence Protection**: Define safe zones to receive instant alerts upon exit.
 
 ---
 
-## 📚 Documentation
+## 💎 Tracer Enterprise Solution & Commercial Customization
 
-Detailed sub-guides to help you get started quickly:
+For **fleet management, logistics operators, shared mobility services, cross-border e-commerce brands, and hardware OEMs**, we offer the private enterprise solution **Tracer**:
 
-- 📖 **[User Guide](docs/user_guide.md)**: Steps on registering, logging in, adding GPS/FindMy devices, configuring geofences, and linking Telegram bots.
-- 🔌 **[Firmware Flashing & Hardware Guide](docs/firmware_guide.md)**: Wiring schematic, flashing tools (OpenOCD/J-Flash/PyOCD), Makefile compilation flags, and seed key derivation theory.
-- 🏠 **[Home Assistant Integration Guide](docs/home_assistant.md)**: Connecting to MQTT Broker, applying your isolated user credentials, and mapping/importing device trackers.
+### 🌟 Enterprise Capabilities
+1. 🏢 **Cloud-Native Private On-Premises Deployment**
+   * Turnkey containerized delivery: Deploy to private clouds or local infrastructure (compatible with major orchestration platforms).
+   * 100% data ownership, compliance, and enterprise privacy guarantee.
+2. 📈 **High-Concurrency Time-Series Trajectory Engine**
+   * Engineered for tens of thousands of active devices with sub-second path retrieval and rendering.
+3. 🏷️ **White-Label & OEM Customization**
+   * Custom branding, custom domain, themed UI, dedicated mobile app branding, and proprietary map credentials.
+4. 👥 **Multi-Tenant & Role-Based Access Control (RBAC)**
+   * Multi-level organization hierarchy (fleet managers, dispatchers, end users) with isolated data boundaries.
+5. 🛠️ **Hardware & Firmware Mass Production Support**
+   * End-to-end hardware development, PCB layout, low-power optimization, and support for cost-effective mass-production SoCs.
 
 ---
 
-## 💎 Private Project "Tracer" Promotion & Commercial Cooperation
+### 📞 Contact & Partnership
 
-If you love AirTracer and need a **private self-hosted environment**, or want to build a **commercial-grade tracking system** for your business, we offer the private enterprise-grade project **Tracer**.
+We welcome inquiries regarding commercial deployment, bulk orders, and OEM customization:
 
-### 🌟 Extra Advantages of Private Tracer:
-1. **Fully Self-Hosted Backend**: Simple Docker-compose setup for the entire infrastructure (FastAPI + PostgreSQL + TimescaleDB + Redis + Mosquitto).
-2. **High-Throughput Optimization**: Optimized TimescaleDB schema for large-scale time-series trajectory writes.
-3. **Enterprise Role-Based Access (RBAC)**: Fine-grained permissions, sub-accounts, and multi-tenant isolation.
-4. **Custom Branding (OEM)**: Custom App name, logo, color palette, custom domain, and independent map integration.
-5. **Custom Hardware Integration**: One-stop solution from schematic design to firmware coding (including support for ultra-low-cost SOCs like ST17H66B).
+* 📧 **Business Email**: [airtagtracer@gmail.com](mailto:airtagtracer@gmail.com)
+* 💬 **Telegram**: [@AirTracer](https://t.me/AirTracer)
+* 📱 **WeChat**: Scan the QR code below (Please note: *AirTracer Partnership*)
 
-### 📞 Contact Us
-If you are interested in self-hosting, custom branding, or hardware integration, reach out to us:
-- 📧 **Email**: [airtagtracer@gmail.com](mailto:airtagtracer@gmail.com)
-- 💬 **Telegram**: [@AirTracer](https://t.me/AirTracer)
+<div align="center">
+  <img src="docs/wechat_qr.jpg" width="220px" alt="WeChat Business Support" />
+</div>
 
-*Please briefly describe your requirements (e.g., self-hosting, custom hardware, enterprise licensing), and we will reply within 24 hours.*
+*Please provide a brief description of your use case when contacting us. We will respond within 24 hours.*
